@@ -15,6 +15,7 @@ from vj4.model.adaptor import problem
 from vj4.model.adaptor import setting
 from vj4.util import misc
 from vj4.util import options
+from vj4.util import pagination
 from vj4.util import validator
 from vj4.handler import base
 
@@ -253,3 +254,17 @@ class UserSearchHandler(base.Handler):
     for i in range(len(udocs)):
       self.modify_udoc(udocs, i)
     self.json(udocs)
+
+
+@app.route('/ranking', 'domain_ranking')
+class RankHandler(base.Handler):
+  USERS_PER_PAGE = 100
+
+  @base.get_argument
+  @base.sanitize
+  async def get(self, *, page: int=1):
+    udocs, uucount, ucount = await pagination.paginate(domain.get_multi_user(domain_id=self.domain_id).sort([('rank', 1)]),
+                                                       page, self.USERS_PER_PAGE)
+    for udoc in udocs:
+      udoc['info'] = await user.get_by_uid(udoc['uid'])
+    self.render('ranking.html', page=page, uucount=uucount, ucount=ucount, udocs=udocs)
