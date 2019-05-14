@@ -148,7 +148,7 @@ class ProblemCategoryHandler(base.OperationHandler):
     pdocs, ppcount, pcount = await pagination.paginate(problem.get_multi(domain_id=self.domain_id,
                                                                          **query,
                                                                          **f) \
-                                                              .sort([('doc_id', 1)]),
+                                                              .sort([('pname', 1)]),
                                                        page, self.PROBLEMS_PER_PAGE)
     if self.has_priv(builtin.PRIV_USER_PROFILE):
       # TODO(iceboy): projection.
