@@ -17,22 +17,6 @@
 {% endif %}
   <div>
     <ol class="menu">
-    {% if page_name == 'discussion_node' %}
-    {% if handler.has_perm(vj4.model.builtin.PERM_CREATE_DISCUSSION) %}
-      <li class="menu__item"><a class="menu__link highlight" href="{{ reverse_url('discussion_create_document_as_node', doc_type=tdoc['doc_type'], doc_id=tdoc['doc_id']) }}">
-        <span class="icon icon-add"></span> {{ _('Create a Discussion') }}
-      </a></li>
-    {% else %}
-      {% if not handler.has_priv(vj4.model.builtin.PRIV_USER_PROFILE) %}
-        <li class="menu__item"><a class="menu__link" href="javascript:showSignInDialog();">
-        <span class="icon icon-add"></span> {{ _('Login to Create a Discussion') }}</a></li>
-      {% else %}
-        <li class="menu__item"><a class="menu__link disabled" href="javascript:;">
-        <span class="icon icon-add"></span> {{ _('No Permission to Create a Discussion') }}</a></li>
-      {% endif %}
-    {% endif %}
-      <li class="menu__seperator"></li>
-    {% endif %}
     {% if page_name != 'contest_detail' %}
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('contest_detail', tid=tdoc['doc_id']) }}">
         <span class="icon icon-award"></span> {{ _('View Contest') }}
@@ -66,16 +50,6 @@
     {% elif handler.can_view_hidden_scoreboard(tdoc) %}
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('contest_scoreboard', tid=tdoc['doc_id']) }}">
         <span class="icon icon-statistics"></span> {{ _('Scoreboard (Hidden)') }}
-      </a></li>
-    {% endif %}
-    {% if handler.own(tdoc, vj4.model.builtin.PERM_EDIT_CONTEST_SELF) or handler.has_perm(vj4.model.builtin.PERM_EDIT_CONTEST) %}
-      <li class="menu__item"><a class="menu__link" href="{{ reverse_url('contest_edit', tid=tdoc['doc_id']) }}">
-        <span class="icon icon-edit"></span>  {{ _('Edit Contest') }}
-      </a></li>
-    {% endif %}
-    {% if handler.has_perm(vj4.model.builtin.PERM_READ_RECORD_CODE) %}
-      <li class="menu__item"><a class="menu__link" href="{{ reverse_url('contest_code', tid=tdoc['doc_id']) }}">
-        <span class="icon icon-download"></span> {{ _('Export All Code') }}
       </a></li>
     {% endif %}
       <li class="menu__item"><a class="menu__link" href="{{ reverse_url('record_main') }}?tid={{ tdoc['doc_id'] }}">

@@ -21,7 +21,6 @@ from vj4.model import opcount
 from vj4.model import token
 from vj4.model import user
 from vj4.model.adaptor import setting
-from vj4.service import mailer
 from vj4.util import json
 from vj4.util import locale
 from vj4.util import options
@@ -215,13 +214,6 @@ class HandlerBase(setting.SettingMixin):
       page_title += ' - {}'.format(self.domain['name'])
     page_title += ' - Vijos'
     return page_title
-
-  async def send_mail(self, mail, title, template_name, **kwargs):
-    content = self.render_html(template_name, url_prefix=options.url_prefix, **kwargs)
-    translate = self.translate
-    if '_' in kwargs:
-      translate = kwargs['_']
-    await mailer.send_mail(mail, '{0} - Vijos'.format(translate(title)), content)
 
 
 class Handler(web.View, HandlerBase):
