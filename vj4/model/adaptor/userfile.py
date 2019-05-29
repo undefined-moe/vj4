@@ -4,7 +4,6 @@ from vj4 import error
 from vj4.model import builtin
 from vj4.model import document
 from vj4.model import domain
-from vj4.model import fs
 from vj4.util import argmethod
 from vj4.util import validator
 
@@ -25,16 +24,6 @@ async def get(fid: objectid.ObjectId):
   if not doc:
     raise error.DocumentNotFoundError(STORE_DOMAIN_ID, document.TYPE_USERFILE, fid)
   return doc
-
-
-@argmethod.wrap
-async def delete(fid: objectid.ObjectId):
-  doc = await get(fid)
-  result = await document.delete(STORE_DOMAIN_ID, document.TYPE_USERFILE, fid)
-  result = bool(result.deleted_count)
-  if result:
-    await fs.unlink(doc['file_id'])
-  return result
 
 
 def get_multi(fields=None, **kwargs):

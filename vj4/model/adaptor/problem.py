@@ -11,7 +11,6 @@ from vj4 import error
 from vj4.model import builtin
 from vj4.model import document
 from vj4.model import domain
-from vj4.model import fs
 from vj4.service import bus
 from vj4.util import argmethod
 from vj4.util import validator
@@ -279,18 +278,6 @@ def delete_solution_reply(domain_id: str, psid: document.convert_doc_id, psrid: 
   return document.delete_sub(domain_id, document.TYPE_PROBLEM_SOLUTION, psid, 'reply', psrid)
 
 
-async def get_data(pdoc):
-  data = pdoc.get('data', None)
-  if not data:
-    return None
-  if type(data) is dict:
-    upper_pdoc = await get(data['domain'], data['pid'])
-    data = upper_pdoc['data']
-    if not data:
-      return None
-  return await fs.get_meta(data)
-
-
 @argmethod.wrap
 async def set_data(domain_id: str, pid: document.convert_doc_id, data: objectid.ObjectId):
   pdoc = await document.set(domain_id, document.TYPE_PROBLEM, pid, data=data)
@@ -306,25 +293,6 @@ async def set_hidden(domain_id: str, pid: document.convert_doc_id, hidden: bool)
   if not pdoc:
     raise error.DocumentNotFoundError(domain_id, document.TYPE_PROBLEM, pid)
   return pdoc
-
-
-@argmethod.wrap
-async def get_data_list(last: int):
-  last_datetime = datetime.datetime.utcfromtimestamp(last)
-  # TODO(twd2): performance improve, more elegant
-  coll = db.coll('document')
-  pdocs = coll.find({'doc_type': document.TYPE_PROBLEM})
-  pids = []  # with domain_id
-  async for pdoc in pdocs:
-    data = await get_data(pdoc)
-    if not data:
-      continue
-    date = data['uploadDate']
-    if not date:
-      continue
-    if last_datetime < date:
-      pids.append((pdoc['domain_id'], pdoc['doc_id']))
-  return list(set(pids))
 
 
 @argmethod.wrap

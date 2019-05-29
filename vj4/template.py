@@ -6,7 +6,6 @@ import jinja2.runtime
 
 import vj4
 import vj4.constant
-import vj4.job
 from vj4.service import staticmanifest
 from vj4.util import json
 from vj4.util import misc

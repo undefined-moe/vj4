@@ -16,7 +16,6 @@ from vj4 import template
 from vj4.model import blacklist
 from vj4.model import builtin
 from vj4.model import domain
-from vj4.model import fs
 from vj4.model import opcount
 from vj4.model import token
 from vj4.model import user
@@ -445,39 +444,6 @@ def post_argument(coro):
 
   return wrapped
 
-
-def multipart_argument(coro):
-  @functools.wraps(coro)
-  async def wrapped(self, **kwargs):
-    file_ids = list()
-    try:
-      async for part in await self.request.multipart():
-        if not part.filename:
-          kwargs[part.name] = (await part.read()).decode()
-        else:
-          grid_in = await fs.add(self.get_content_type(part.filename))
-          try:
-            chunk = await part.read_chunk()
-            while chunk:
-              _, chunk = await asyncio.gather(grid_in.write(chunk), part.read_chunk())
-            await grid_in.close()
-          except:
-            await grid_in.abort()
-            raise
-          file_id = await fs.link_by_md5(grid_in.md5, grid_in._id)
-          if file_id:
-            await fs.unlink(grid_in._id)
-          else:
-            file_id = grid_in._id
-          file_ids.append(file_id)
-          kwargs[part.name] = file_id
-      return await coro(self, **kwargs)
-    except:
-      await asyncio.gather(*[fs.unlink(file_id) for file_id in file_ids])
-      # TODO(iceboy): call self.response.force_close() after aiohttp supports it.
-      raise
-
-  return wrapped
 
 def limit_rate(op, period_secs, max_operations):
   def decorate(coro):
