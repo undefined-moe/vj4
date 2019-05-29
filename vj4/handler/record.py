@@ -223,23 +223,3 @@ class RecordRejudgeHandler(base.Handler):
       self.check_priv(builtin.PRIV_REJUDGE)
     await record.rejudge(rdoc['_id'])
     self.json_or_redirect(self.referer_or_main)
-
-
-@app.route('/records/{rid}/data', 'record_pretest_data')
-class RecordPretestDataHandler(base.Handler):
-  @base.route_argument
-  @base.sanitize
-  async def get(self, *, rid: objectid.ObjectId):
-    rdoc = await record.get(rid)
-    if not rdoc or rdoc['type'] != constant.record.TYPE_PRETEST:
-      raise error.RecordNotFoundError(rid)
-    if not self.own(rdoc, builtin.PRIV_READ_PRETEST_DATA_SELF, 'uid'):
-      self.check_priv(builtin.PRIV_READ_PRETEST_DATA)
-    if not rdoc.get('data_id'):
-      raise error.RecordDataNotFoundError(rdoc['_id'])
-    secret = await fs.get_secret(rdoc['data_id'])
-    if not secret:
-      raise error.RecordDataNotFoundError(rdoc['_id'])
-    self.redirect(options.cdn_prefix.rstrip('/') + \
-                  self.reverse_url('fs_get', domain_id=builtin.DOMAIN_ID_SYSTEM,
-                                   secret=secret))

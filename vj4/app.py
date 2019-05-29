@@ -85,11 +85,8 @@ class Application(web.Application):
     # Load views.
     from vj4.handler import contest
     from vj4.handler import domain
-    from vj4.handler import fs
     from vj4.handler import home
-    from vj4.handler import judge
     from vj4.handler import misc
-    from vj4.handler import problem
     from vj4.handler import record
     from vj4.handler import user
     from vj4.handler import i18n
