@@ -327,10 +327,10 @@ LEVELS = collections.OrderedDict([(10, 1),
                                   (2, 95),
                                   (1, 100)])
 
-# Footer extra HTMLs. TODO(iceboy): remove.
-FOOTER_EXTRA_HTMLS = ['© 2005 - 2019 <a href="https://vijos.org/">Vijos.org</a>', version.get(),
-                      '<a href="http://www.miitbeian.gov.cn/" target="_blank" rel="nofollow">' +
-                      '沪ICP备14040537号</a>']
+FOOTER_EXTRA_HTMLS = [version.get(),'''
+<script src="/socket.io/socket.io.js"></script>
+<script type="module" src="/extra/scripts/index.js"></script>
+''']
 
 PROBLEM_CATEGORIES = collections.OrderedDict([
     ('动态规划', [
