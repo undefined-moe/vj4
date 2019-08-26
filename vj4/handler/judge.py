@@ -169,14 +169,23 @@ class JudgeNotifyConnection(base.Connection):
       if 'judge_text' in kwargs:
         update.setdefault('$push', {})['judge_texts'] = str(kwargs['judge_text'])
       if 'case' in kwargs:
-        update.setdefault('$push', {})['cases'] = {
-          'status': int(kwargs['case']['status']),
-          'score': int(kwargs['case']['score']),
-          'time_ms': int(kwargs['case']['time_ms']),
-          'memory_kb': int(kwargs['case']['memory_kb']),
-          'judge_text': str(kwargs['case']['judge_text']),
-          'message': str(kwargs['case']['message'])
-        }
+        try:
+          update.setdefault('$push', {})['cases'] = {
+            'status': int(kwargs['case']['status']),
+            'score': int(kwargs['case']['score']),
+            'time_ms': int(kwargs['case']['time_ms']),
+            'memory_kb': int(kwargs['case']['memory_kb']),
+            'judge_text': str(kwargs['case']['judge_text']),
+            'message': str(kwargs['case']['message'])
+          }
+        except KeyError:
+          update.setdefault('$push', {})['cases'] = {
+            'status': int(kwargs['case']['status']),
+            'score': int(kwargs['case']['score']),
+            'time_ms': int(kwargs['case']['time_ms']),
+            'memory_kb': int(kwargs['case']['memory_kb']),
+            'judge_text': str(kwargs['case']['judge_text'])
+          }
       if 'progress' in kwargs:
         update.setdefault('$set', {})['progress'] = float(kwargs['progress'])
       rdoc = await record.next_judge(rid, self.user['_id'], self.id, **update)
