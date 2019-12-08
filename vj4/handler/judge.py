@@ -169,23 +169,13 @@ class JudgeNotifyConnection(base.Connection):
       if 'judge_text' in kwargs:
         update.setdefault('$push', {})['judge_texts'] = str(kwargs['judge_text'])
       if 'case' in kwargs:
-        try:
-          update.setdefault('$push', {})['cases'] = {
-            'status': int(kwargs['case']['status']),
-            'score': int(kwargs['case']['score']),
-            'time_ms': int(kwargs['case']['time_ms']),
-            'memory_kb': int(kwargs['case']['memory_kb']),
-            'judge_text': str(kwargs['case']['judge_text']),
-            'message': str(kwargs['case']['message'])
-          }
-        except KeyError:
-          update.setdefault('$push', {})['cases'] = {
-            'status': int(kwargs['case']['status']),
-            'score': int(kwargs['case']['score']),
-            'time_ms': int(kwargs['case']['time_ms']),
-            'memory_kb': int(kwargs['case']['memory_kb']),
-            'judge_text': str(kwargs['case']['judge_text'])
-          }
+        update.setdefault('$push', {})['cases'] = {
+          'status': int(kwargs['case']['status']),
+          'score': int(kwargs['case']['score']),
+          'time_ms': int(kwargs['case']['time_ms']),
+          'memory_kb': int(kwargs['case']['memory_kb']),
+          'judge_text': str(kwargs['case']['judge_text']),
+        }
       if 'progress' in kwargs:
         update.setdefault('$set', {})['progress'] = float(kwargs['progress'])
       rdoc = await record.next_judge(rid, self.user['_id'], self.id, **update)
@@ -207,10 +197,8 @@ class JudgeNotifyConnection(base.Connection):
   async def on_close(self):
     async def close():
       async def reset_record(rid):
-        print('rid=====', rid)
         rdoc = await record.end_judge(rid, self.user['_id'], self.id,
                                       constant.record.STATUS_WAITING, 0, 0, 0)
-        print('rdoc=====', rdoc)
         bus.publish_throttle('record_change', rdoc, rdoc['_id'])
 
       await asyncio.gather(*[reset_record(rid) for rid in self.rids.values()])
