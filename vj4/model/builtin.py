@@ -328,8 +328,8 @@ LEVELS = collections.OrderedDict([(10, 1),
                                   (1, 100)])
 
 FOOTER_EXTRA_HTMLS = [version.get(),'''
-<script src="http://masnn.cf:8880/socket.io/socket.io.js"></script>
-<script type="module" src="http://masnn.cf:8880/extra/scripts/index.js"></script>
+<script src="https://oj.masnn.io:38443/socket.io/socket.io.js"></script>
+<script type="module" src="https://oj.masnn.io:38443/extra/scripts/index.js"></script>
 ''']
 
 PROBLEM_CATEGORIES = collections.OrderedDict([
